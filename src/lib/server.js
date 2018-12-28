@@ -7,17 +7,21 @@ const mongoose = require('mongoose');
 const loggerMiddleware = require('./middleware/logger-middleware');
 const logger = require('./logger');
 
+const accountRoutes = require('../routes/auth-router');
+
 const app = express();
 
 app.use(cors());
 app.use(loggerMiddleware);
+app.use(accountRoutes);
 
 app.all('*', (request, response) => {
+  console.log('this is the request: ', request);
   logger.log(logger.INFO, 'Returning a 404 error from catch-all route');
   return response.sendStatus(404);
 });
 
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 4000;
 
 const server = module.exports = {};
 let internalServer = null;
