@@ -23,26 +23,26 @@ router.post('/signup', jsonParser, (request, response, next) => {
   }
 
   return Account.create(request.body.username, request.body.email, request.body.password)
-      .then((createdAccount) => {
-        delete request.body.password;
-        return createdAccount.pCreateToken();
-      })
-      .then((token) => {
-        logger.log(logger.INFO, 'Responding with a 200 status code and a token');
-        return response.json(
-            {
-              token,
-            },
-        );
-      })
-      .then((createdAccount) => {
-        return response.json(
-            {
-              createdAccount,
-            },
-        );
-      })
-      .catch(error => next(error));
+    .then((createdAccount) => {
+      delete request.body.password;
+      return createdAccount.pCreateToken();
+    })
+    .then((token) => {
+      logger.log(logger.INFO, 'Responding with a 200 status code and a token');
+      return response.json(
+        {
+          token,
+        },
+      );
+    })
+    .then((createdAccount) => {
+      return response.json(
+        {
+          createdAccount,
+        },
+      );
+    })
+    .catch(error => next(error));
 });
 
 
@@ -55,9 +55,9 @@ router.get('/login', basicAccountMiddleware, (request, response, next) => {
     return next(new HttpError(400, 'Bad Request'));
   }
   return request.account.pCreateToken()
-      .then((token) => {
-        logger.log(logger.INFO, 'Responding with a 200 status code and a token');
-        return response.json({ token });
-      })
-      .catch(next);
+    .then((token) => {
+      logger.log(logger.INFO, 'Responding with a 200 status code and a token');
+      return response.json({ token });
+    })
+    .catch(next);
 });
