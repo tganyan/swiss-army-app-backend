@@ -31,6 +31,12 @@ const accountSchema = mongoose.Schema({
     required: true,
     unique: true,
   },
+  dashboards: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'dashboard',
+    },
+  ],
 },
 {
   usePushEach: true,
@@ -39,25 +45,25 @@ const accountSchema = mongoose.Schema({
 function pCreateToken() {
   this.tokenSeed = crypto.randomBytes(TOKEN_SEED_LENGTH).toString('hex');
   return this.save()
-      .then((savedAccount) => {
-        return jsonWebToken.sign({
-          tokenSeed: savedAccount.tokenSeed,
-        }, process.env.SECRET);
-      })
-      .catch((error) => {
-        throw error;
-      });
+    .then((savedAccount) => {
+      return jsonWebToken.sign({
+        tokenSeed: savedAccount.tokenSeed,
+      }, process.env.SECRET);
+    })
+    .catch((error) => {
+      throw error;
+    });
 }
 
 function pVerifyPassword(password) {
   return bcrypt.compare(password, this.passwordHash)
-      .then((compareResult) => {
-        if (!compareResult) {
-          throw new HttpError(401, 'Unauthorized');
-        }
-        return this;
-      })
-      .catch(console.error);
+    .then((compareResult) => {
+      if (!compareResult) {
+        throw new HttpError(401, 'Unauthorized');
+      }
+      return this;
+    })
+    .catch(console.error);
 }
 
 accountSchema.methods.pCreateToken = pCreateToken;
@@ -66,14 +72,14 @@ const Account = module.exports = mongoose.model('account', accountSchema);
 
 Account.create = (username, email, password) => {
   return bcrypt.hash(password, HASH_ROUNDS)
-      .then((passwordHash) => {
-        password = null;
-        const tokenSeed = crypto.randomBytes(TOKEN_SEED_LENGTH).toString('hex');
-        return new Account({
-          username,
-          email,
-          tokenSeed,
-          passwordHash,
-        }).save();
-      });
+    .then((passwordHash) => {
+      password = null;
+      const tokenSeed = crypto.randomBytes(TOKEN_SEED_LENGTH).toString('hex');
+      return new Account({
+        username,
+        email,
+        tokenSeed,
+        passwordHash,
+      }).save();
+    });
 };
